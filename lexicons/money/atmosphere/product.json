@@ -1,0 +1,97 @@
+{
+  "lexicon": 1,
+  "id": "money.atmosphere.product",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Public ATM catalog product describing what is sold; prices live in money.atmosphere.price.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["title", "kind", "createdAt"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxGraphemes": 100,
+            "maxLength": 1000
+          },
+          "sku": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "defaultPrice": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef"
+          },
+          "kind": {
+            "type": "string",
+            "knownValues": [
+              "physical",
+              "digital",
+              "commission",
+              "membership",
+              "service",
+              "ticket",
+              "support",
+              "other"
+            ],
+            "maxLength": 32
+          },
+          "description": {
+            "type": "string",
+            "maxGraphemes": 1000,
+            "maxLength": 10000
+          },
+          "image": {
+            "type": "ref",
+            "ref": "#image",
+            "description": "Public product image. ATM-created products use an AT Protocol blob stored on the creator's PDS; apps render it through their own CDN/proxy."
+          },
+          "variantOf": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "archivedAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "sourceGeneration": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Optional app-owned monotonic projection generation. Once present, writers must not replace this record with a lower or unversioned generation."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "required": ["blob"],
+      "description": "Public product image. ATM-created products use an AT Protocol blob stored on the creator's PDS; apps render it through their own CDN/proxy.",
+      "properties": {
+        "blob": {
+          "type": "blob",
+          "accept": ["image/jpeg", "image/png", "image/webp"],
+          "maxSize": 2000000
+        },
+        "alt": {
+          "type": "string",
+          "maxGraphemes": 300,
+          "maxLength": 3000
+        }
+      }
+    }
+  }
+}

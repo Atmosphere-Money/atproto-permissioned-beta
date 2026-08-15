@@ -1,0 +1,65 @@
+{
+  "lexicon": 1,
+  "id": "money.atmosphere.membership.program",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Public ATM creator membership program. This is the app-neutral membership identity that apps can honor for cross-app access; prices live in money.atmosphere.price and app-specific presentation lives in sidecar records.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["title", "createdAt"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxGraphemes": 100,
+            "maxLength": 1000,
+            "description": "Public membership program name."
+          },
+          "description": {
+            "type": "string",
+            "maxGraphemes": 1000,
+            "maxLength": 10000,
+            "description": "Public description or terms for the membership program. Do not include private delivery instructions, member lists, customer emails, or processor state."
+          },
+          "scope": {
+            "type": "string",
+            "knownValues": ["creator-wide", "app-specific"],
+            "maxLength": 32,
+            "description": "Whether apps should treat this as a creator-wide membership or a membership intended for one app surface. Absence should be treated as creator-wide."
+          },
+          "product": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef",
+            "description": "Optional parent money.atmosphere.product record with kind=membership."
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Whether this membership program is no longer offered to new members. Missing means false."
+          },
+          "archivedAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "sourceGeneration": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Optional app-owned monotonic projection generation used to reject stale membership projections."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When this membership program record was created."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When this membership program record was last updated."
+          }
+        }
+      }
+    }
+  }
+}

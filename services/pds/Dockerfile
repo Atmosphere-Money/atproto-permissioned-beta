@@ -1,5 +1,5 @@
 # NOTE there is an additional build stage below that should match
-FROM node:24.18-alpine3.23 AS build
+FROM node:24.18-alpine3.23@sha256:ba63d8e0b5d4cbc6db9da12ea77ddb35a4783ad653a092ef115cc383526d4369 AS build
 
 RUN npm install -g pnpm@11.11.0
 
@@ -62,6 +62,8 @@ COPY ./packages/oauth/oauth-scopes ./packages/oauth/oauth-scopes
 COPY ./packages/oauth/oauth-types ./packages/oauth/oauth-types
 COPY ./packages/pds ./packages/pds
 COPY ./packages/repo ./packages/repo
+COPY ./packages/space ./packages/space
+COPY ./packages/sync ./packages/sync
 COPY ./packages/syntax ./packages/syntax
 COPY ./packages/ws-client ./packages/ws-client
 COPY ./packages/xrpc-server ./packages/xrpc-server
@@ -76,9 +78,9 @@ RUN pnpm run --recursive --stream --workspace-concurrency 1 --filter 'pds-servic
 RUN pnpm install --prod --shamefully-hoist --frozen-lockfile --prefer-offline --config.confirmModulesPurge=false
 
 # Uses assets from build stage to reduce build size
-FROM node:24.18-alpine3.23
+FROM node:24.18-alpine3.23@sha256:ba63d8e0b5d4cbc6db9da12ea77ddb35a4783ad653a092ef115cc383526d4369
 
-RUN apk add --update dumb-init
+RUN apk add --no-cache dumb-init=1.2.5-r3
 
 # Avoid zombie processes, handle signal forwarding
 ENTRYPOINT ["dumb-init", "--"]
@@ -99,8 +101,8 @@ ENV UV_USE_IO_URING=0
 USER node
 CMD ["node", "--heapsnapshot-signal=SIGUSR2", "--enable-source-maps", "--import=@atproto/pds/telemetry", "index.ts"]
 
-LABEL org.opencontainers.image.source=https://github.com/bluesky-social/atproto
-LABEL org.opencontainers.image.description="ATP Personal Data Server (PDS)"
+LABEL org.opencontainers.image.source=https://github.com/Atmosphere-Money/atproto-permissioned-beta
+LABEL org.opencontainers.image.description="Experimental permissioned-data ATP Personal Data Server (PDS)"
 LABEL org.opencontainers.image.licenses=MIT
 
 # Allows consumer to distinguish pre-otel builds

@@ -1,0 +1,117 @@
+{
+  "lexicon": 1,
+  "id": "money.atmosphere.membership.tier",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Public ATM membership tier for a creator membership program. This is the portable tier/access target; app-specific badges, layout, welcome messages, and private member content belong in sidecar records.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["program", "title", "createdAt"],
+        "properties": {
+          "program": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "AT-URI identity of the parent money.atmosphere.membership.program. Programs are mutable display records and consumers resolve the current record by URI."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxGraphemes": 100,
+            "maxLength": 1000,
+            "description": "Public tier name."
+          },
+          "description": {
+            "type": "string",
+            "maxGraphemes": 1000,
+            "maxLength": 10000,
+            "description": "Public description of this tier. Do not include private URLs, member-only content, or customer-specific instructions."
+          },
+          "benefits": {
+            "type": "array",
+            "maxLength": 24,
+            "items": {
+              "type": "ref",
+              "ref": "#benefit"
+            },
+            "description": "Public benefit labels only. Access enforcement comes from active payment state, not this display list."
+          },
+          "product": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef",
+            "description": "Optional money.atmosphere.product record with kind=membership for this tier."
+          },
+          "defaultPrice": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef",
+            "description": "Optional CID-pinned strongRef to the current recurring money.atmosphere.price for this tier. The money path resolves and re-quotes through this ref; inline display fields are never settlement truth."
+          },
+          "unitAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Display amount in the smallest unit of currency, matching the linked price when present."
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 16,
+            "description": "Lowercase 3–16-letter currency identifier. Fiat identifiers use ISO 4217 codes. Catalog values may be stored before a payment rail supports them; chargeability is enforced separately by the configured processor allowlist."
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Optional access rank within the program. Higher ranks may include lower-rank benefits when an app chooses tier-or-above semantics; absence means exact-tier semantics."
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Creator-controlled display order."
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "Whether this tier is no longer available for new members. Missing means false."
+          },
+          "archivedAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "sourceGeneration": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Optional app-owned monotonic projection generation used to reject stale membership projections."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When this tier record was created."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When this tier record was last updated."
+          }
+        }
+      }
+    },
+    "benefit": {
+      "type": "object",
+      "required": ["label"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "Optional app-neutral benefit category. Apps may ignore unknown values."
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxGraphemes": 120,
+          "maxLength": 1200,
+          "description": "Public benefit label."
+        }
+      }
+    }
+  }
+}

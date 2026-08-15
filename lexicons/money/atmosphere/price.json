@@ -1,0 +1,149 @@
+{
+  "lexicon": 1,
+  "id": "money.atmosphere.price",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Public ATM price record describing amount, currency, and billing cadence for an offer (product, membership tier, or ticket type). Price records are immutable: economics changes mint a new price and repoint the offer defaultPrice.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["offerUri", "currency", "type", "createdAt"],
+        "properties": {
+          "offerUri": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "AT-URI of the offer record this price belongs to: a money.atmosphere.product, money.atmosphere.membership.tier, or tickets.atmosphere.ticketType in the same repo. Carries no CID: prices point up at their mutable parent; offers pin prices down via defaultPrice."
+          },
+          "lookupKey": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "nickname": {
+            "type": "string",
+            "maxGraphemes": 100,
+            "maxLength": 1000
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 16,
+            "description": "Lowercase 3–16-letter currency identifier. Fiat identifiers use ISO 4217 codes. Catalog values may be stored before a payment rail supports them; chargeability is enforced separately by the configured processor allowlist."
+          },
+          "unitAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Amount in the smallest unit of currency (e.g. cents for USD). Zero means a free/non-payment price: ATM paid checkout enforces payment minimums (recurring subscriptions especially), so zero-amount prices represent free offerings granted outside the charge flow, never a chargeable price. Required for per-unit prices (including customer-chosen amounts); omit for tiered prices, whose amounts live in tiers. When customUnitAmount is enabled, this is the sole default/preset amount shown to the buyer rather than a fixed charge. Matches Stripe Price.unit_amount, which is null for tiered prices."
+          },
+          "customUnitAmount": {
+            "type": "ref",
+            "ref": "#customUnitAmount",
+            "description": "Stripe-compatible customer-chosen amount configuration. When enabled, unitAmount should be treated as the default/preset display amount rather than a fixed charge."
+          },
+          "billingScheme": {
+            "type": "string",
+            "knownValues": ["per-unit", "tiered"],
+            "maxLength": 32,
+            "description": "Stripe-compatible billing scheme. Supper membership tiers use per-unit; tiered is reserved for quantity or usage based apps."
+          },
+          "tiersMode": {
+            "type": "string",
+            "knownValues": ["graduated", "volume"],
+            "maxLength": 32,
+            "description": "Stripe-compatible tier mode when billingScheme is tiered."
+          },
+          "tiers": {
+            "type": "array",
+            "maxLength": 100,
+            "items": {
+              "type": "ref",
+              "ref": "#tier"
+            },
+            "description": "Stripe-compatible quantity or usage tiers for future non-Supper apps. Supper membership tiers are represented as separate recurring prices instead."
+          },
+          "type": {
+            "type": "string",
+            "knownValues": ["one-time", "recurring"],
+            "maxLength": 16
+          },
+          "recurring": {
+            "type": "ref",
+            "ref": "#recurring"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "sourceGeneration": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Optional app-owned monotonic projection generation. Once present, writers must not replace this record with a lower or unversioned generation."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    },
+    "tier": {
+      "type": "object",
+      "properties": {
+        "upTo": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Inclusive upper quantity bound for this tier, matching Stripe tiers[].up_to. Omit on the final tier (no upper bound, Stripe's \"inf\")."
+        },
+        "unitAmount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flatAmount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "customUnitAmount": {
+      "type": "object",
+      "required": ["enabled"],
+      "description": "Stripe-compatible customer-chosen amount configuration. When enabled, unitAmount should be treated as the default/preset display amount rather than a fixed charge.",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Minimum buyer-entered amount, in the smallest unit of currency."
+        },
+        "maximum": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum buyer-entered amount, in the smallest unit of currency."
+        }
+      }
+    },
+    "recurring": {
+      "type": "object",
+      "required": ["interval"],
+      "properties": {
+        "interval": {
+          "type": "string",
+          "knownValues": ["day", "week", "month", "year"],
+          "maxLength": 16
+        },
+        "intervalCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1095,
+          "description": "Number of interval units between billings (Stripe allows up to 3 years per cycle, e.g. 156 weeks or 1095 days). Absent means 1, matching Stripe Price.recurring.interval_count."
+        }
+      }
+    }
+  }
+}
