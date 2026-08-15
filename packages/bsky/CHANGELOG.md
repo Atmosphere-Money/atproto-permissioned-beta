@@ -1,5 +1,20 @@
 # @atproto/bsky
 
+## 0.0.276
+
+### Patch Changes
+
+- [#5402](https://github.com/bluesky-social/atproto/pull/5402) [`1307a87`](https://github.com/bluesky-social/atproto/commit/1307a874f656a63d751d80ae4945580ce92ea4f5) Thanks [@ds-boyce](https://github.com/ds-boyce)! - Pass authenticated user context to feature gates on feed requests.
+
+- [#5409](https://github.com/bluesky-social/atproto/pull/5409) [`a1fa25e`](https://github.com/bluesky-social/atproto/commit/a1fa25e17e2de6d85f6049b0dd70148c72a5c0ff) Thanks [@ds-boyce](https://github.com/ds-boyce)! - Forward the client beta-user header to AppView and include it in GrowthBook targeting attributes.
+
+- [#5410](https://github.com/bluesky-social/atproto/pull/5410) [`02f6e22`](https://github.com/bluesky-social/atproto/commit/02f6e227bbb35da2596c476fdf2711d14036ef0b) Thanks [@rafaeleyng](https://github.com/rafaeleyng)! - Add optional OpenTelemetry setup and instrument AppView's ConnectRPC dataplane client.
+
+- Updated dependencies [[`615ac2a`](https://github.com/bluesky-social/atproto/commit/615ac2a8cc72cd475dc4f06f743f2514d8afc6e0)]:
+  - @atproto/xrpc-server@0.12.6
+  - @atproto-labs/xrpc-utils@0.1.19
+  - @atproto/sync@0.4.6
+
 ## 0.0.275
 
 ### Patch Changes

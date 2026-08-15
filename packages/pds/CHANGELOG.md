@@ -1,5 +1,15 @@
 # @atproto/pds
 
+## 0.5.30
+
+### Patch Changes
+
+- [#5409](https://github.com/bluesky-social/atproto/pull/5409) [`a1fa25e`](https://github.com/bluesky-social/atproto/commit/a1fa25e17e2de6d85f6049b0dd70148c72a5c0ff) Thanks [@ds-boyce](https://github.com/ds-boyce)! - Forward the client beta-user header to AppView and include it in GrowthBook targeting attributes.
+
+- Updated dependencies [[`615ac2a`](https://github.com/bluesky-social/atproto/commit/615ac2a8cc72cd475dc4f06f743f2514d8afc6e0)]:
+  - @atproto/xrpc-server@0.12.6
+  - @atproto-labs/xrpc-utils@0.1.19
+
 ## 0.5.29
 
 ### Patch Changes
